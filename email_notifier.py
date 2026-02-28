@@ -20,6 +20,7 @@ import mimetypes
 import os
 import smtplib
 from dataclasses import dataclass
+from datetime import datetime, timezone
 from email.message import EmailMessage
 from pathlib import Path
 from typing import Any, Dict, Iterable, List, Optional, Union
