@@ -342,7 +342,7 @@ def _parse_failures(
     for testcase in testcases:
         failure_node = testcase.find("failure")
         error_node = testcase.find("error")
-        node = failure_node or error_node
+        node = failure_node if failure_node is not None else error_node
         if node is None:
             continue
 
