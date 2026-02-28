@@ -1,0 +1,78 @@
+# HuaweiDocTester configuration
+# 注意：
+# 1) Cursor Background Agent API 仅支持 Pro 及以上计划。
+# 2) API 调用会消耗配额并产生计费，建议限制每次运行的任务数。
+
+products:
+  - name: ecs
+    start_url: "https://support.huaweicloud.com/ecs/index.html"
+    scope_prefixes: ["/ecs/"]
+    max_pages: 200
+    delay_range: [1.0, 2.0]
+    timeout: 20
+  - name: vpc
+    start_url: "https://support.huaweicloud.com/vpc/index.html"
+    scope_prefixes: ["/vpc/"]
+    max_pages: 200
+    delay_range: [1.0, 2.0]
+    timeout: 20
+
+repository:
+  # 用于 Cursor Agent 和测试执行器拉取代码
+  url: "https://github.com/your-org/your-test-repo"
+  local_path: "."
+  branch: "main"
+  pull_latest: true
+
+paths:
+  docs_output_root: "data/huawei_docs"
+  generated_tests_dir: "tests/generated"
+  report_dir: "reports/tests"
+  change_log_file: "data/monitor_logs/change_log.jsonl"
+
+cursor:
+  enabled: true
+  # 建议使用环境变量注入，避免明文存储：
+  # export CURSOR_API_KEY=...
+  api_key: ""
+  api_base_url: "https://api.cursor.com"
+  wait_timeout: 1800
+  poll_interval: 5
+  # plan: pro / business / enterprise / team
+  plan: "pro"
+  # 单次任务上限（用于控制调用量和费用）
+  max_generation_tasks_per_run: 20
+
+pytest:
+  tests_path: "tests"
+  extra_args: ["-q"]
+  timeout: 3600
+
+failure_analysis:
+  enabled: true
+  # Cursor返回并同步测试文件后是否自动提交
+  auto_commit: true
+
+email:
+  enabled: false
+  smtp_host: "smtp.example.com"
+  smtp_port: 587
+  smtp_sender: "bot@example.com"
+  smtp_sender_name: "HuaweiDocTester Bot"
+  smtp_username: "bot@example.com"
+  smtp_password: ""
+  smtp_recipients:
+    - "qa@example.com"
+    - "dev@example.com"
+  smtp_use_tls: true
+  smtp_use_ssl: false
+  smtp_timeout: 30
+  # 调试时可开启 dry_run，跳过真实发送
+  smtp_dry_run: true
+
+schedule:
+  timezone: "Asia/Shanghai"
+  # 每天凌晨执行文档变更监控和增量更新
+  monitor_cron: "0 2 * * *"
+  # 每周一凌晨执行全量测试
+  full_test_cron: "0 3 * * 1"
